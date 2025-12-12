@@ -1,0 +1,27 @@
+groups:
+- name: kafka-alerts
+  rules:
+  - alert: HighConsumerLag
+    expr: sum(kafka_consumergroup_lag{group="day2-group"}) > 100
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: "High consumer lag for day2-group"
+      description: "Consumer group day2-group has lag > 100 for more than 2 minutes"
+
+  - alert: UnderReplicatedPartitions
+    expr: kafka_server_replicamanager_underreplicatedpartitions > 0
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Under replicated partitions"
+      description: "There are under-replicated partitions"
+
+  - alert: KafkaBrokerDown
+    expr: absent(kafka_server_brokertopicmetrics_messagesin_total)
+    for: 2m
+    labels: { severity: critical }
+    annotations:
+      summary: "No broker metrics - broker might be down"
